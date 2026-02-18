@@ -46,14 +46,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prashantkmishra/rn-aes-gcm-crypto.git.git"
+    "url": "git+https://github.com/prashantkmishra/react-native-aes-gcm.git.git"
   },
   "author": "Prashant Mishra <p_mishra@live.com> (https://www.npmjs.com/~pmishra0)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/prashantkmishra/rn-aes-gcm-crypto.git/issues"
+    "url": "https://github.com/prashantkmishra/react-native-aes-gcm.git/issues"
   },
-  "homepage": "https://github.com/prashantkmishra/rn-aes-gcm-crypto.git#readme",
+  "homepage": "https://github.com/prashantkmishra/react-native-aes-gcm.git#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
