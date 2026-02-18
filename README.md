@@ -12,11 +12,20 @@ npm install react-native-aes-gcm
 
 
 ```js
-import { multiply } from 'react-native-aes-gcm';
+import { encrypt, decrypt } from 'react-native-aes-gcm';
 
 // ...
 
-const result = multiply(3, 7);
+const encrypted = await encrypt(text, key, iterations).catch((e) => {
+        console.log('Error Enctyption:: ', e);
+        
+      });
+
+const decrypted = await decrypt(text, key, iterations).catch((e) => {
+        console.log('Error:: ', e);
+        
+      });
+     
 ```
 
 

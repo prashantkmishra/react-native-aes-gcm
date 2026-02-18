@@ -1,18 +1,66 @@
 #import "AesGcm.h"
+#import "AesGcm-Swift.h"
 
 @implementation AesGcm
 RCT_EXPORT_MODULE()
 
-- (NSNumber *)multiply:(double)a b:(double)b {
-    NSNumber *result = @(a * b);
+#pragma mark - Init
+- (instancetype)init {
+  if (self = [super init]) {
+    _manager = [EncryptionManager new];
+  }
+  return self;
+}
 
-    return result;
+#pragma mark - Properties
+EncryptionManager *_manager;
+
+- (void)encrypt:(NSString *)plainText
+            key:(NSString *)key
+ iterationCount:(double)iterationCount
+        resolve:(RCTPromiseResolveBlock)resolve
+         reject:(RCTPromiseRejectBlock)reject {
+  
+  NSError *error = nil;
+  NSString *result = [_manager encrypt:plainText
+                                   key:key
+                        iterationCount:@((int)iterationCount)
+                                 error:&error];
+  if (result != nil) {
+    resolve(result);
+  } else {
+    reject(@"encrypt_error",
+           error.localizedDescription ?: @"Encryption failed",
+           error);
+  }
+  
+}
+
+- (void)decrypt:(NSString *)encryptedText
+            key:(NSString *)key
+ iterationCount:(double)iterationCount
+        resolve:(RCTPromiseResolveBlock)resolve
+         reject:(RCTPromiseRejectBlock)reject {
+  NSError *error = nil;
+  
+  NSString *result = [_manager decrypt:encryptedText
+                                   key:key
+                        iterationCount:@((int)iterationCount)
+                                 error:&error];
+  
+  if (result != nil) {
+    resolve(result);
+  } else {
+    reject(@"decrypt_error",
+           error.localizedDescription ?: @"Decryption failed",
+           error);
+  }
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+(const facebook::react::ObjCTurboModule::InitParams &)params
 {
-    return std::make_shared<facebook::react::NativeAesGcmSpecJSI>(params);
+  return std::make_shared<facebook::react::NativeAesGcmSpecJSI>(params);
 }
 
 @end
