@@ -15,13 +15,19 @@ RCT_EXPORT_MODULE()
 #pragma mark - Properties
 EncryptionManager *_manager;
 
-- (void)encrypt:(NSString *)plainText
+RCT_EXPORT_METHOD(encrypt:(NSString *)plainText
             key:(NSString *)key
      saltLength:(double)saltLength
        ivLength:(double)ivLength
  iterationCount:(double)iterationCount
         resolve:(RCTPromiseResolveBlock)resolve
-         reject:(RCTPromiseRejectBlock)reject {
+         reject:(RCTPromiseRejectBlock)reject) {
+  
+#ifdef RCT_NEW_ARCH_ENABLED
+  NSLog(@"New Arch");
+#else
+  NSLog(@"Old Arch");
+#endif
   
   NSError *error = nil;
   NSString *result = [_manager encrypt:plainText
@@ -40,13 +46,13 @@ EncryptionManager *_manager;
   
 }
 
-- (void)decrypt:(NSString *)encryptedText
-            key:(NSString *)key
-     saltLength:(double)saltLength
-       ivLength:(double)ivLength
- iterationCount:(double)iterationCount
-        resolve:(RCTPromiseResolveBlock)resolve
-         reject:(RCTPromiseRejectBlock)reject {
+RCT_EXPORT_METHOD(decrypt:(NSString *)encryptedText
+                  key:(NSString *)key
+           saltLength:(double)saltLength
+             ivLength:(double)ivLength
+       iterationCount:(double)iterationCount
+              resolve:(RCTPromiseResolveBlock)resolve
+               reject:(RCTPromiseRejectBlock)reject ) {
   NSError *error = nil;
   
   NSString *result = [_manager decrypt:encryptedText
@@ -65,10 +71,13 @@ EncryptionManager *_manager;
   }
 }
 
+// Don't compile this code when we build for the old architecture.
+#ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
 (const facebook::react::ObjCTurboModule::InitParams &)params
 {
-  return std::make_shared<facebook::react::NativeAesGcmSpecJSI>(params);
+    return std::make_shared<facebook::react::NativeAesGcmSpecJSI>(params);
 }
+#endif
 
 @end

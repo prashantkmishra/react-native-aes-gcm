@@ -3,6 +3,7 @@ package com.aesgcm
 import android.util.Base64
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
@@ -22,12 +23,13 @@ import javax.crypto.spec.SecretKeySpec
 
 
 @ReactModule(name = AesGcmModule.NAME)
-class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(reactContext) {
+class AesGcmModule(reactContext: ReactApplicationContext) : AesGcmSpec(reactContext) {
 
   override fun getName(): String {
     return NAME
   }
 
+  @ReactMethod
   override fun encrypt(
     plainText: String,
     key: String,
@@ -54,6 +56,7 @@ class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(rea
     }
   }
 
+  @ReactMethod
   override fun decrypt(
     encryptedText: String,
     key: String,
