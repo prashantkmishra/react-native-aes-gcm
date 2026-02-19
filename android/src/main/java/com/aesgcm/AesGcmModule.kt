@@ -31,13 +31,15 @@ class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(rea
   override fun encrypt(
     plainText: String,
     key: String,
+    saltLength: Double,
+    ivLength: Double,
     iterationCount: Double,
     promise: Promise
   ) {
     try {
-      val salt = getRandomNonce(SALT_LENGTH)
+      val salt = getRandomNonce(saltLength.toInt())
       val secretKey: SecretKey = getAESKeyFromPassword(key.toCharArray(), salt, iterationCount)
-      val iv = getRandomNonce(IV_LENGTH)
+      val iv = getRandomNonce(ivLength.toInt())
       val cipher = initCipher(Cipher.ENCRYPT_MODE, secretKey, iv)
       val encryptedMessageByte = cipher.doFinal(plainText.toByteArray())
       val cipherByte = ByteBuffer.allocate(salt.size + iv.size + encryptedMessageByte.size)
@@ -55,6 +57,8 @@ class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(rea
   override fun decrypt(
     encryptedText: String,
     key: String,
+    saltLength: Double,
+    ivLength: Double,
     iterationCount: Double,
     promise: Promise
   ) {
@@ -64,15 +68,15 @@ class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(rea
         Base64.NO_WRAP
       )
       val byteBuffer = ByteBuffer.wrap(decode)
-      val salt = ByteArray(SALT_LENGTH)
+      val salt = ByteArray(saltLength.toInt())
       byteBuffer.get(salt)
-      val iv = ByteArray(IV_LENGTH)
+      val iv = ByteArray(ivLength.toInt())
       byteBuffer.get(iv)
       val content = ByteArray(byteBuffer.remaining())
       byteBuffer.get(content)
       val cipher = Cipher.getInstance(CIPHER_ALGORITHM)
       val aesKeyFromPassword: SecretKeySpec = getAESKeyFromPassword(key.toCharArray(), salt, iterationCount)
-      cipher.init(Cipher.DECRYPT_MODE, aesKeyFromPassword, GCMParameterSpec(GCM_TAG_LENGTH * 8, iv))
+      cipher.init(Cipher.DECRYPT_MODE, aesKeyFromPassword, GCMParameterSpec(GCM_TAG_LENGTH, iv))
       val plainText = String(cipher.doFinal(content))
       promise.resolve(plainText);
     } catch (e: java.lang.Exception) {
@@ -94,23 +98,21 @@ class AesGcmModule(reactContext: ReactApplicationContext) : NativeAesGcmSpec(rea
   )
   private fun initCipher(mode: Int, secretKey: SecretKey?, iv: ByteArray): Cipher {
     val cipher = Cipher.getInstance(CIPHER_ALGORITHM)
-    cipher.init(mode, secretKey, GCMParameterSpec(GCM_TAG_LENGTH * 8, iv))
+    cipher.init(mode, secretKey, GCMParameterSpec(GCM_TAG_LENGTH, iv))
     return cipher
   }
 
   @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
   private fun getAESKeyFromPassword(password: CharArray?, salt: ByteArray, iterationCount: Double): SecretKeySpec {
     val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
-    val spec: KeySpec = PBEKeySpec(password, salt, iterationCount.toInt(), KEY_LENGTH * 8)
+    val spec: KeySpec = PBEKeySpec(password, salt, iterationCount.toInt(), KEY_LENGTH)
     return SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES")
   }
 
   companion object {
     const val NAME = "AesGcm"
-    private const val GCM_TAG_LENGTH: Int = 16
-    private const val SALT_LENGTH: Int = 16
-    private const val IV_LENGTH: Int = 12
-    private const val KEY_LENGTH: Int = 32
+    private const val GCM_TAG_LENGTH: Int = 128 // bits
+    private const val KEY_LENGTH: Int = 256 // AES-256
     private const val CIPHER_ALGORITHM: String = "AES/GCM/NoPadding"
   }
 }

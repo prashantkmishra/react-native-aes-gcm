@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => min_ios_version_supported }
-  s.source       = { :git => "https://github.com/prashantkmishra/rn-aes-gcm-crypto.git.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/prashantkmishra/react-native-aes-gcm.git.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.exclude_files = [
@@ -19,7 +19,8 @@ Pod::Spec.new do |s|
     "ios/**/RCTModuleProviders.*", 
     "ios/**/RCTThirdPartyComponentsProvider.*",
     "ios/**/RCTModulesConformingToProtocolsProvider.*",
-    "ios/**/RCTUnstableModulesRequiringMainQueueSetupProvider.*"
+    "ios/**/RCTUnstableModulesRequiringMainQueueSetupProvider.*",
+    "**/Package.swift"
   ]
   s.private_header_files = "ios/**/*.h"
   s.dependency "CryptoSwift"
