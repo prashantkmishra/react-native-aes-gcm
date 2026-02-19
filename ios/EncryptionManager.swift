@@ -11,16 +11,12 @@ import Foundation
 
 @objc(EncryptionManager)
 public class EncryptionManager: NSObject {
-  let SALT_LENGTH = 16
-  let IV_LENGTH = 12
-  let encriptedPos =  28
-  let remainingLengh = 0
   
   func getRandomNonce(length: Int) throws -> [UInt8] {
     var nonce = [UInt8](repeating: 0, count: length)
     let result = SecRandomCopyBytes(kSecRandomDefault, length, &nonce)
     guard result == errSecSuccess else {
-      throw NSError(domain: "com.example", code: Int(result), userInfo: nil)
+      throw NSError(domain: "com.aesgcm", code: Int(result), userInfo: nil)
     }
     return nonce
   }
@@ -31,9 +27,11 @@ public class EncryptionManager: NSObject {
     return salt
   }
   
-  @objc(decrypt:key:iterationCount:error:)
+  @objc(decrypt:key:saltLength:ivLength:iterationCount:error:)
   public func decrypt(_ encryptedText: String,
                       key: String,
+                      saltLength: NSNumber,
+                      ivLength: NSNumber,
                       iterationCount: NSNumber,
                       error: NSErrorPointer) -> String? {
     
@@ -45,16 +43,16 @@ public class EncryptionManager: NSObject {
                       code: -1,
                       userInfo: [NSLocalizedDescriptionKey: "Invalid Base64 input"])
       }
-      guard encryptedData.count > (SALT_LENGTH + IV_LENGTH) else {
+      guard encryptedData.count > (saltLength.intValue + ivLength.intValue) else {
         throw NSError(domain: "Decryption",
                       code: -2,
                       userInfo: [NSLocalizedDescriptionKey: "Encrypted data too short"])
       }
       
       // Extract salt, IV, ciphertext(+tag if combined)
-      let salt = encryptedData[..<SALT_LENGTH]
-      let iv = encryptedData[SALT_LENGTH..<(SALT_LENGTH + IV_LENGTH)]
-      let encrypted = encryptedData[(SALT_LENGTH + IV_LENGTH)...]
+      let salt = encryptedData[..<saltLength.intValue]
+      let iv = encryptedData[saltLength.intValue..<(saltLength.intValue + ivLength.intValue)]
+      let encrypted = encryptedData[(saltLength.intValue + ivLength.intValue)...]
       
       let saltData: [UInt8] = Array(salt)
       let password: [UInt8] = Array(key.utf8)
@@ -94,9 +92,11 @@ public class EncryptionManager: NSObject {
     }
   }
   
-  @objc(encrypt:key:iterationCount:error:)
+  @objc(encrypt:key:saltLength:ivLength:iterationCount:error:)
   public func encrypt(_ plainText: String,
                       key: String,
+                      saltLength: NSNumber,
+                      ivLength: NSNumber,
                       iterationCount: NSNumber,
                       error: NSErrorPointer) -> String? {
     
@@ -104,8 +104,8 @@ public class EncryptionManager: NSObject {
       print("encryptTextAesGcm JSON : \(plainText)")
       print("encryptTextAesGcm Key : \(key)")
       
-      let salt = generateRandomSalt(length: SALT_LENGTH)
-      let iv = try getRandomNonce(length: IV_LENGTH)
+      let salt = generateRandomSalt(length: saltLength.intValue)
+      let iv = try getRandomNonce(length: ivLength.intValue)
       
       let password: [UInt8] = Array(key.utf8)
       let plainTextArray: [UInt8] = Array(plainText.utf8)

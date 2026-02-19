@@ -5,11 +5,15 @@ export interface Spec extends TurboModule {
   encrypt(
     plainText: string,
     key: string,
+    saltLength: number,
+    ivLength: number,
     iterationCount: number
   ): Promise<string>;
   decrypt(
     encryptedText: string,
     key: string,
+    saltLength: number,
+    ivLength: number,
     iterationCount: number
   ): Promise<string>;
 }

@@ -17,6 +17,8 @@ EncryptionManager *_manager;
 
 - (void)encrypt:(NSString *)plainText
             key:(NSString *)key
+     saltLength:(double)saltLength
+       ivLength:(double)ivLength
  iterationCount:(double)iterationCount
         resolve:(RCTPromiseResolveBlock)resolve
          reject:(RCTPromiseRejectBlock)reject {
@@ -24,6 +26,8 @@ EncryptionManager *_manager;
   NSError *error = nil;
   NSString *result = [_manager encrypt:plainText
                                    key:key
+                            saltLength:@((int)saltLength)
+                              ivLength: @((int)ivLength)
                         iterationCount:@((int)iterationCount)
                                  error:&error];
   if (result != nil) {
@@ -38,6 +42,8 @@ EncryptionManager *_manager;
 
 - (void)decrypt:(NSString *)encryptedText
             key:(NSString *)key
+     saltLength:(double)saltLength
+       ivLength:(double)ivLength
  iterationCount:(double)iterationCount
         resolve:(RCTPromiseResolveBlock)resolve
          reject:(RCTPromiseRejectBlock)reject {
@@ -45,6 +51,8 @@ EncryptionManager *_manager;
   
   NSString *result = [_manager decrypt:encryptedText
                                    key:key
+                            saltLength:@((int)saltLength)
+                              ivLength: @((int)ivLength)
                         iterationCount:@((int)iterationCount)
                                  error:&error];
   

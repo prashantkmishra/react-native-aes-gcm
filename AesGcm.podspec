@@ -19,7 +19,8 @@ Pod::Spec.new do |s|
     "ios/**/RCTModuleProviders.*", 
     "ios/**/RCTThirdPartyComponentsProvider.*",
     "ios/**/RCTModulesConformingToProtocolsProvider.*",
-    "ios/**/RCTUnstableModulesRequiringMainQueueSetupProvider.*"
+    "ios/**/RCTUnstableModulesRequiringMainQueueSetupProvider.*",
+    "**/Package.swift"
   ]
   s.private_header_files = "ios/**/*.h"
   s.dependency "CryptoSwift"

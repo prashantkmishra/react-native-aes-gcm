@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { encrypt, decrypt } from 'react-native-aes-gcm';
@@ -15,6 +16,8 @@ export default function App() {
   const [text, setText] = useState('');
   const [key, setKey] = useState('');
   const [iterations, setIterations] = useState(1000);
+  const [saltLength, setSaltLength] = useState(16);
+  const [keyLength, setKeyLength] = useState(12);
   const [isEncryptMode, setIsEncryptMode] = useState(true);
   const [result, setResult] = useState('');
 
@@ -24,7 +27,9 @@ export default function App() {
       return;
     }
     if (isEncryptMode) {
-      const encrypted = await encrypt(text, key, iterations).catch((e) => {
+      const encrypted = await encrypt(text, key, {
+        iterationCount: iterations,
+      }).catch((e) => {
         console.log('Error Enctyption:: ', e);
         setResult(e.toString());
       });
@@ -35,7 +40,9 @@ export default function App() {
       console.log('Input text:: ', text);
       console.log('key:: ', key);
     } else {
-      const decrypted = await decrypt(text, key, iterations).catch((e) => {
+      const decrypted = await decrypt(text, key, {
+        iterationCount: iterations,
+      }).catch((e) => {
         console.log('Error:: ', e);
         setResult(e.toString());
       });
@@ -71,6 +78,28 @@ export default function App() {
 
           <TextInput
             style={styles.input}
+            placeholder="Salt length"
+            value={saltLength.toString()}
+            onChangeText={(value) => {
+              const num = Number.parseInt(value, 10);
+              setSaltLength(Number.isNaN(num) ? 0 : num);
+            }}
+            keyboardType="numeric"
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Key length"
+            value={keyLength.toString()}
+            onChangeText={(value) => {
+              const num = Number.parseInt(value, 10);
+              setKeyLength(Number.isNaN(num) ? 0 : num);
+            }}
+            keyboardType="numeric"
+          />
+
+          <TextInput
+            style={styles.input}
             placeholder="Iterations count"
             value={iterations.toString()}
             onChangeText={(value) => {
@@ -93,9 +122,17 @@ export default function App() {
               {isEncryptMode ? 'Encrypt' : 'Decrypt'}
             </Text>
           </TouchableOpacity>
-
-          <Text style={styles.resultTitle}>Result:</Text>
-          <Text style={styles.result}>{result}</Text>
+          {result?.length > 0 && (
+            <>
+              <Text style={styles.resultTitle}>Result:</Text>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={styles.scroll}
+              >
+                <Text style={styles.result}>{result}</Text>
+              </ScrollView>
+            </>
+          )}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -106,6 +143,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFF',
+  },
+  scroll: {
+    flexGrow: 1,
   },
   container: {
     flex: 1,
