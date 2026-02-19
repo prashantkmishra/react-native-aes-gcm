@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { encrypt, decrypt } from 'react-native-aes-gcm';
+import { encrypt, decrypt } from '@pmishra0/react-native-aes-gcm';
 
 export default function App() {
   const [text, setText] = useState('');

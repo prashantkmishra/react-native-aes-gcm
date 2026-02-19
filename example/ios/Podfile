@@ -1,6 +1,6 @@
-ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+# ✅ Allow switching via environment variable
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
-# Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
@@ -21,14 +21,15 @@ target 'AesGcmExample' do
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
+    :new_arch_enabled => ENV['RCT_NEW_ARCH_ENABLED'] == '1',
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-
-  # Run Codegen during development for the example app.
+  # ✅ Optional Codegen (only needed for New Arch)
   pre_install do |installer|
-    system("cd ../../ && npx bob build --target codegen")
+    if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+      system("cd ../../ && npx bob build --target codegen")
+    end
   end
 
   post_install do |installer|
@@ -36,7 +37,6 @@ target 'AesGcmExample' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
     )
   end
 end
