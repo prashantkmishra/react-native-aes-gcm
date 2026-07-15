@@ -1,11 +1,11 @@
 #ifdef RCT_NEW_ARCH_ENABLED
-  #import <AesGcm/RNAesGcmSpec.h>
+#import "RNAesGcmSpec.h"
 
-  @interface AesGcm : NSObject <NativeAesGcmSpec>
+@interface AesGcm : NSObject <NativeAesGcmSpec>
 #else
-  #import <React/RCTBridgeModule.h>
+#import <React/RCTBridgeModule.h>
 
-  @interface AesGcm : NSObject <RCTBridgeModule>
+@interface AesGcm : NSObject <RCTBridgeModule>
 #endif
 
 @end

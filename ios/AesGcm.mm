@@ -23,11 +23,6 @@ RCT_EXPORT_METHOD(encrypt:(NSString *)plainText
         resolve:(RCTPromiseResolveBlock)resolve
          reject:(RCTPromiseRejectBlock)reject) {
   
-#ifdef RCT_NEW_ARCH_ENABLED
-  NSLog(@"New Arch");
-#else
-  NSLog(@"Old Arch");
-#endif
   
   NSError *error = nil;
   NSString *result = [_manager encrypt:plainText

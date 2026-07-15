@@ -1,12 +1,12 @@
 {
   "name": "@pmishra0/react-native-aes-gcm",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "AES-GCM encryption/decryption for React Native",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",
   "module": "./lib/module/index.js",
   "types": "lib/typescript/src/index.d.ts",
-  "react-native": "./src/index", 
+  "react-native": "./src/index",
   "exports": {
     ".": {
       "types": "./lib/typescript/src/index.d.ts",
@@ -26,7 +26,6 @@
     "react-native.config.js",
     "!ios/build",
     "!ios/generated",
-    "!android/generated",
     "!android/build",
     "!android/gradle",
     "!android/gradlew",
